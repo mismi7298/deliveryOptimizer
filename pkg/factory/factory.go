@@ -18,6 +18,8 @@ import (
 
 func FacotrySetup() {
 
+	var restaurants = restaurants.NewRestaurantClient()
+	var customers = customer.NewCustomerClient()
 	var orderDL = orderDL.NewDL()
 	var orderBL = order.NewBL(orderDL)
 
@@ -27,12 +29,12 @@ func FacotrySetup() {
 	var orderMapperDL = orderMapperDL.NewDL()
 	var orderMapperBL = ordermapper.NewBL(delExBL, orderMapperDL)
 
+	NewInitClient(orderDL, delExDL, restaurants, customers).InitHandler()
+
 	var routerDL = routerDL.NewDL()
-	var routerBL = router.NewBL(orderBL, orderMapperBL, routerDL)
+	var routerBL = router.NewBL(orderBL, orderMapperBL, restaurants, routerDL)
 
 	var orderProcessorBL = orderprocessor.NewBL(orderMapperBL, routerBL, orderBL)
-
-	NewInitClient(orderDL, delExDL, restaurants.NewRestaurantClient(), customer.NewCustomerClient()).InitHandler()
 
 	var orderqueue = make(chan model.OrderEvent, 10)
 	var handler = handler.NewHandler(orderBL, orderProcessorBL, &orderqueue)

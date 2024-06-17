@@ -25,3 +25,13 @@ func (r *RestaurantClient) GetRestaurantById(id string) model.Restaurant {
 	}
 	return model.Restaurant{}
 }
+
+func (r *RestaurantClient) GetRestaurantByLocationId(id string) model.Restaurant {
+
+	for i := range r.restaurants {
+		if r.restaurants[i].Location.Id == id {
+			return r.restaurants[i]
+		}
+	}
+	return model.Restaurant{}
+}

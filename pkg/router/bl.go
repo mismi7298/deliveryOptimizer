@@ -1,12 +1,13 @@
 package router
 
 import (
-	"fmt"
-	"log"
 	"deliveryOptimzer/pkg/model"
 	"deliveryOptimzer/pkg/order"
 	ordermapper "deliveryOptimzer/pkg/order_mapper"
+	"deliveryOptimzer/pkg/restaurants"
 	"deliveryOptimzer/pkg/router/dl"
+	"fmt"
+	"log"
 	"math"
 )
 
@@ -14,13 +15,15 @@ type BL struct {
 	dl            *dl.DL
 	orderBL       *order.BL
 	orderMapperBL *ordermapper.BL
+	restaurants   *restaurants.RestaurantClient
 }
 
-func NewBL(orderBL *order.BL, orderMapperBL *ordermapper.BL, dl *dl.DL) *BL {
+func NewBL(orderBL *order.BL, orderMapperBL *ordermapper.BL, restaurants *restaurants.RestaurantClient, dl *dl.DL) *BL {
 	return &BL{
 		dl:            dl,
 		orderBL:       orderBL,
 		orderMapperBL: orderMapperBL,
+		restaurants:   restaurants,
 	}
 }
 
@@ -55,7 +58,7 @@ func (bl *BL) FindBestRoute(de model.DeliveryExecutive, orders []model.Order) (l
 		currDistance := 0.0
 		prevLocation := de.Location
 		for _, currentLocation := range path {
-			prepTime := findRestaurantByLocationId(orders, currentLocation.Id).PrepTime
+			prepTime := bl.restaurants.GetRestaurantByLocationId(currentLocation.Id).PrepTime
 			currDistance += calculateDistance(prevLocation, currentLocation) + prepTimeToDistance(prepTime)
 			prevLocation = currentLocation
 		}
@@ -92,13 +95,4 @@ func prepTimeToDistance(preptime float64) float64 {
 
 func toRadians(deg float64) float64 {
 	return deg * (math.Pi / 180)
-}
-
-func findRestaurantByLocationId(orders []model.Order, locationId string) model.Restaurant {
-	for _, order := range orders {
-		if order.Restaurant.Location.Id == locationId {
-			return order.Restaurant
-		}
-	}
-	return model.Restaurant{}
 }
