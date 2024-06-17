@@ -2,6 +2,9 @@
 
 Delivery Optimzer is a package which finds optimal path for a delivery executive for multiple orders according to it's current location.
 
+## Problem statement
+
+![problem statement](problem_statement.png) 
 
 ## Flow Diagram
 
