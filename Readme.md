@@ -15,7 +15,7 @@ Delivery Optimzer is a package which finds optimal path for a delivery executive
 
 ```bash
 # change the directory
-cd delivery_optimizer
+cd deliveryOptimizer
 ```
 
 ```bash
